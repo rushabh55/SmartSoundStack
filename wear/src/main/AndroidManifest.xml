@@ -3,7 +3,7 @@
     package="com.rit.songstack" >
 
     <uses-feature android:name="android.hardware.type.watch" />
-
+    <uses-permission android:name="android.permission.BODY_SENSORS" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -16,6 +16,7 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+
             </intent-filter>
         </activity>
     </application>
