@@ -81,7 +81,8 @@ public class ShuffleActivity extends Activity {
                 savedPlayList.add(currentSongPath);
             }
         });
-
+        String s = "" + HeartBeat.getHeartBeat();
+        heartRate.setText(s);
         Thread t = new Thread() {
 
             @Override
@@ -93,7 +94,10 @@ public class ShuffleActivity extends Activity {
                             @Override
                             public void run() {
                                 // update TextView here!
-                                heartRate.setText("");
+                                String s = heartRate.getText().toString();
+                                int i = Integer.parseInt(s);
+                                s = ""  + HeartBeat.getHeartBeatLerped(i);
+                                heartRate.setText(s);
                             }
                         });
                     }
