@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="BTN_GENRE_SELECT">Continue</string>
+    <string name="TEXT_GENRE_SOFT">Soft</string>
+    <string name="TXT_GENRE_HARD">Heavy</string>
+</resources>

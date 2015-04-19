@@ -3,4 +3,7 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="BTN_GENRE_SELECT">Continue</string>
+    <string name="TEXT_GENRE_SOFT">Soft</string>
+    <string name="TXT_GENRE_HARD">Heavy</string>
 </resources>
