@@ -1,17 +1,25 @@
 package com.rit.songstack;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.MessageEvent;
 import com.larswerkman.holocolorpicker.*;
 import android.util.*;
 import android.widget.Toast;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements MessageApi.MessageListener {
     public static final int min = Math.abs(-21760);
     public static final int max = Math.abs(-16777216);
     ColorPicker freqSelector;
@@ -28,6 +36,14 @@ public class MainActivity extends Activity {
 
     public static int getGenre(){
         return _genre;
+    }
+    public class MessageReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String message = intent.getStringExtra("message");
+            // Display message in UI
+            ampView.setText(message);
+        }
     }
 
     @Override
@@ -48,7 +64,7 @@ public class MainActivity extends Activity {
                 Style = updateTempo();
                 String val = ""+ Style;
                 freqView.setText(val.toCharArray(), 0, val.length());
-                Toast.makeText(getApplicationContext(), "" + Style, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "" + Style, Toast.LENGTH_SHORT).show();
             }
         });
         freqSelector.setOnColorChangedListener(new ColorPicker.OnColorChangedListener() {
@@ -56,7 +72,7 @@ public class MainActivity extends Activity {
             public void onColorChanged(int i) {
                 style = i;
                 Style = updateTempo();
-                Toast.makeText(getApplicationContext(), "" + Style, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "" + Style, Toast.LENGTH_SHORT).show();
                 String val = ""+ Style;
                 freqView.setText(val.toCharArray(), 0, val.length());
             }
@@ -71,6 +87,10 @@ public class MainActivity extends Activity {
                 //updateGenre();
             }
         });
+
+        IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
+        MessageReceiver messageReceiver = new MessageReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter);
     }
     public double updateTempo() {
         if ( style < -1 || style > 1 ){
@@ -82,6 +102,18 @@ public class MainActivity extends Activity {
             Log.d("SongStack", "" + style);
         }
         return style;
+    }
+
+    @Override
+    public void onMessageReceived(MessageEvent messageEvent) {
+        {
+            Intent startIntent = new Intent(this, MainActivity.class);
+            startIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(startIntent);
+            byte[] p= messageEvent.getData();
+            String w = new String(p);
+            Toast.makeText(getApplicationContext(), w, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
