@@ -81,6 +81,27 @@ public class ShuffleActivity extends Activity {
             }
         });
 
+        Thread t = new Thread() {
+
+            @Override
+            public void run() {
+                try {
+                    while (!isInterrupted()) {
+                        Thread.sleep(1000);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // update TextView here!
+                                heartRate.setText("");
+                            }
+                        });
+                    }
+                } catch (InterruptedException e) {
+                }
+            }
+        };
+
+        t.start();
         stop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
