@@ -15,19 +15,20 @@
  * limitations under the License.
  */
 
-        package com.rit.songstack;
+package com.rit.songstack;
 
-        import android.app.Activity;
-        import android.hardware.Sensor;
-        import android.hardware.SensorEvent;
-        import android.hardware.SensorEventListener;
-        import android.hardware.SensorManager;
-        import android.os.Bundle;
-        import android.support.wearable.view.WatchViewStub;
-        import android.util.Log;
-        import android.widget.TextView;
+import android.app.Activity;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.os.Bundle;
+import android.support.wearable.view.WatchViewStub;
+import android.util.Log;
+import android.view.WindowManager;
+import android.widget.TextView;
 
-        import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CountDownLatch;
 
 public class MainActivity extends Activity implements SensorEventListener{
 
@@ -36,47 +37,52 @@ public class MainActivity extends Activity implements SensorEventListener{
     private TextView rate;
     private TextView accuracy;
     private TextView sensorInformation;
-    private static final int SENSOR_TYPE_HEARTRATE = 65562;
+    private static final int SENSOR_TYPE_HEARTRATE = Sensor.TYPE_HEART_RATE;
     private Sensor mHeartRateSensor;
     private SensorManager mSensorManager;
-    private CountDownLatch latch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main );
-        latch = new CountDownLatch(1);
-        final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
-        stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
-            @Override
-            public void onLayoutInflated(WatchViewStub stub) {
-                rate = (TextView) stub.findViewById(R.id.rate);
-                rate.setText("Reading...");
+        try {
+            Log.d(TAG, "We're in!");
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_main);
+            //latch = new CountDownLatch(1);
+            final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
+            stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
+                @Override
+                public void onLayoutInflated(WatchViewStub stub) {
+                    rate = (TextView) stub.findViewById(R.id.rate);
+                    rate.setText("Reading...");
 
-                accuracy = (TextView) stub.findViewById(R.id.accuracy);
-                sensorInformation = (TextView) stub.findViewById(R.id.sensor);
+                    accuracy = (TextView) stub.findViewById(R.id.accuracy);
+                    sensorInformation = (TextView) stub.findViewById(R.id.sensor);
 
-                latch.countDown();
-            }
-        });
+                    //latch.countDown();
+                }
+            });
 
-        mSensorManager = ((SensorManager)getSystemService(SENSOR_SERVICE));
-        mHeartRateSensor = mSensorManager.getDefaultSensor(SENSOR_TYPE_HEARTRATE); // using Sensor Lib2 (Samsung Gear Live)
-        //mHeartRateSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE); // using Sensor Lib (Samsung Gear Live)
-
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            mSensorManager = ((SensorManager) getSystemService(SENSOR_SERVICE));
+            mHeartRateSensor = mSensorManager.getDefaultSensor(SENSOR_TYPE_HEARTRATE); // using Sensor Lib2 (Samsung Gear Live)
+            //mHeartRateSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE); // using Sensor Lib (Samsung Gear Live)
+        }
+        catch (Exception e) {
+            Log.d(TAG, e.toString());
+        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        mSensorManager.registerListener(this, this.mHeartRateSensor, 3);
+        mSensorManager.registerListener(this, this.mHeartRateSensor,SENSOR_TYPE_HEARTRATE);
     }
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         try {
-            latch.await();
+            //latch.await();
             if(sensorEvent.values[0] > 0){
                 Log.d(TAG, "sensor event: " + sensorEvent.accuracy + " = " + sensorEvent.values[0]);
                 rate.setText(String.valueOf(sensorEvent.values[0]));
@@ -84,7 +90,7 @@ public class MainActivity extends Activity implements SensorEventListener{
                 sensorInformation.setText(sensorEvent.sensor.toString());
             }
 
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
         }
 
