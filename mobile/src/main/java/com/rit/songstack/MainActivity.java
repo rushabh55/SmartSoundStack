@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -28,6 +30,8 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
     ValueBar valueBar;
     /* Corresponds to the genre codes on the SongGenres.java */
     private static int _genre = SongGenres.NONE;
+
+    private Button letsShuffle;
 
     double style = 0d;
     double amplitude = 0d;
@@ -55,6 +59,17 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
         freqSelector = (ColorPicker) findViewById( R.id.picker );
         valueBar = (ValueBar) findViewById(R.id.VB1);
         ampView = (TextView) findViewById(R.id.textView2);
+
+        letsShuffle = (Button) findViewById(R.id.button);
+
+        letsShuffle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ShuffleActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
         freqSelector.addValueBar(valueBar);
         freqSelector.setOnColorSelectedListener(new ColorPicker.OnColorSelectedListener() {
