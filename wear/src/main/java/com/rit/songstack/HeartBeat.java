@@ -8,14 +8,14 @@ import java.util.Random;
 
 class Rand extends Random {
     int nextInt(int min, int max) {
-        return min + next(max);
+        return min + nextInt(max - min + 1);
     }
 }
 public abstract class HeartBeat {
     private static Rand r = new Rand();
     static int min = 55;
     static int max = 130;
-    static int delta = 5;
+    static int delta = 3;
     public static int getHeartBeat(){
         int initialRandom = r.nextInt(min, max);
         return initialRandom;
@@ -24,6 +24,12 @@ public abstract class HeartBeat {
     public static int getHeartBeatLerped(int current){
         int currMin = current - delta;
         int currMax = current + delta;
-        return r.nextInt(currMin, currMax);
+
+        int curr = r.nextInt(currMax - currMin + 1) + currMin;
+        if ( curr < min )
+            curr = min;
+        if (curr > max )
+            curr = max;
+        return curr;
     }
 }
